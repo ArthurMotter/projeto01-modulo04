@@ -6,7 +6,11 @@ import com.abutua.agenda_backend.models.Area;
 import com.abutua.agenda_backend.models.Profissional;
 import com.abutua.agenda_backend.repositories.AreaRepository;
 import com.abutua.agenda_backend.repositories.ProfissionalRepository;
+import com.abutua.agenda_backend.services.exceptions.ResourceNotFoundException;
 import com.abutua.agenda_backend.services.mappers.ProfissionalMapper;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,5 +54,43 @@ public class ProfissionalService {
         profissional = profissionalRepository.save(profissional);
 
         return ProfissionalMapper.toResponseDTO(profissional);
+    }
+
+    @Transactional(readOnly = true)
+    public ProfissionalResponseDTO findById(Long id) {
+        Profissional profissional = profissionalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Profissional não encontrado com o id: " + id));
+        return ProfissionalMapper.toResponseDTO(profissional);
+    }
+    
+    // Edit
+    @Transactional
+    public ProfissionalResponseDTO update(Long id, ProfissionalRequestDTO profissionalRequestDTO) {
+        try {
+            Profissional profissional = profissionalRepository.getReferenceById(id);
+
+            profissional.setNome(profissionalRequestDTO.getNome());
+            profissional.setTelefone(profissionalRequestDTO.getTelefone());
+            profissional.setEmail(profissionalRequestDTO.getEmail());
+            profissional.setAtivo(profissionalRequestDTO.getAtivo());
+
+            profissional.getAreas().clear();
+            List<Area> areas = areaRepository.findAllById(profissionalRequestDTO.getAreaIds());
+            profissional.getAreas().addAll(areas);
+
+            profissional = profissionalRepository.save(profissional);
+
+            return ProfissionalMapper.toResponseDTO(profissional);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Profissional não encontrado com o id: " + id);
+        }
+    }
+
+    // Delete
+    public void delete(Long id) {
+        if (!profissionalRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Profissional não encontrado com o id: " + id);
+        }
+        profissionalRepository.deleteById(id);
     }
 }

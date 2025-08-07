@@ -20,7 +20,7 @@ public class ProfissionalController {
     @Autowired
     private ProfissionalService profissionalService;
 
-    // Fetch filter
+    // Find with filter
     @GetMapping
     public ResponseEntity<Page<ProfissionalResponseDTO>> findAll(
         @RequestParam(name = "nome", defaultValue = "") String nome,
@@ -30,10 +30,31 @@ public class ProfissionalController {
         return ResponseEntity.ok(profissionais);
     }
 
+    // Find by ID
+    @GetMapping("{id}")
+    public ResponseEntity<ProfissionalResponseDTO> findById(@PathVariable Long id) {
+        ProfissionalResponseDTO profissionalDTO = profissionalService.findById(id);
+        return ResponseEntity.ok(profissionalDTO);
+    }
+
     // Create
     @PostMapping
     public ResponseEntity<ProfissionalResponseDTO> create(@RequestBody @Valid ProfissionalRequestDTO profissionalRequestDTO) {
         ProfissionalResponseDTO novoProfissional = profissionalService.create(profissionalRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProfissional);
+    }
+
+    // Update
+    @PutMapping("{id}")
+    public ResponseEntity<ProfissionalResponseDTO> update(@PathVariable Long id, @RequestBody @Valid ProfissionalRequestDTO profissionalRequestDTO) {
+        ProfissionalResponseDTO profissionalAtualizado = profissionalService.update(id, profissionalRequestDTO);
+        return ResponseEntity.ok(profissionalAtualizado);
+    }
+
+    // Delete
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        profissionalService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

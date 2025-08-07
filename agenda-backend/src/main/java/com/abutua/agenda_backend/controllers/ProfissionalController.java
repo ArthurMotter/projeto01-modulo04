@@ -5,9 +5,12 @@ import com.abutua.agenda_backend.dtos.ProfissionalResponseDTO;
 import com.abutua.agenda_backend.services.ProfissionalService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("profissionais")
@@ -17,6 +20,17 @@ public class ProfissionalController {
     @Autowired
     private ProfissionalService profissionalService;
 
+    // Fetch filter
+    @GetMapping
+    public ResponseEntity<Page<ProfissionalResponseDTO>> findAll(
+        @RequestParam(name = "nome", defaultValue = "") String nome,
+        @PageableDefault(page = 0, size = 10, sort = "nome") Pageable pageable
+    ) {
+        Page<ProfissionalResponseDTO> profissionais = profissionalService.findAll(nome, pageable);
+        return ResponseEntity.ok(profissionais);
+    }
+
+    // Create
     @PostMapping
     public ResponseEntity<ProfissionalResponseDTO> create(@RequestBody @Valid ProfissionalRequestDTO profissionalRequestDTO) {
         ProfissionalResponseDTO novoProfissional = profissionalService.create(profissionalRequestDTO);

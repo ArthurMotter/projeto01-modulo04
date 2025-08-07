@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder.Default;
 
 import java.util.Set;
 
@@ -27,11 +28,12 @@ public class Profissional {
 
     @Column(length = 100)
     private String email;
-    
+
     @Column(nullable = false)
+    @Default
     private Boolean ativo = true;
 
-    @ManyToMany(fetch = FetchType.EAGER) 
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "profissional_area",
         joinColumns = @JoinColumn(name = "profissional_id"),

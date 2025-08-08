@@ -16,6 +16,7 @@ export class ProfissionalListComponent implements OnInit {
   @ViewChild('formModal') formModal!: ModalComponent;
   @ViewChild('deleteConfirmationModal') deleteConfirmationModal!: ModalComponent;
 
+  expandedProfissionalId: number | null = null;
   profissionalToEdit?: Profissional;
   profissionalToDelete?: Profissional;
   modalTitle = '';
@@ -67,6 +68,14 @@ export class ProfissionalListComponent implements OnInit {
   openDeleteConfirmation(profissional: Profissional): void {
     this.profissionalToDelete = profissional;
     this.deleteConfirmationModal.open();
+  }
+
+  toggleDetails(id: number): void {
+    if (this.expandedProfissionalId === id) {
+      this.expandedProfissionalId = null;
+    } else {
+      this.expandedProfissionalId = id;
+    }
   }
 
   // Handlers

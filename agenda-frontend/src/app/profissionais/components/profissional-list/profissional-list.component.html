@@ -25,36 +25,51 @@
 
     <!-- Professionals Table -->
     <div *ngIf="!isLoading && page && page.content.length > 0" class="table-responsive">
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover align-middle">
             <thead class="table-light">
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Nome</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Áreas</th>
+                    <th scope="col" class="d-none d-md-table-cell">Email</th>
+                    <th scope="col" class="d-none d-md-table-cell">Áreas</th>
                     <th scope="col">Ativo</th>
-                    <th scope="col">Ações</th>
+                    <th scope="col" style="width: 150px;">Ações</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let profissional of page.content">
-                    <th scope="row">{{ profissional.id }}</th>
-                    <td>{{ profissional.nome }}</td>
-                    <td>{{ profissional.email }}</td>
-                    <td>
-                        {{ getAreaNames(profissional.areas) }}
-                    </td>
-                    <td>
-                        <span *ngIf="profissional.ativo" class="badge bg-success">Sim</span>
-                        <span *ngIf="!profissional.ativo" class="badge bg-danger">Não</span>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-primary me-2"
-                            (click)="openModalForEdit(profissional)">Editar</button>
-                        <button class="btn btn-sm btn-danger"
-                            (click)="openDeleteConfirmation(profissional)">Excluir</button>
-                    </td>
-                </tr>
+                <ng-container *ngFor="let profissional of page.content">
+                    <!-- MAIN ROW -->
+                    <tr class="text-nowrap">
+                        <th scope="row">{{ profissional.id }}</th>
+                        <td>{{ profissional.nome }}</td>
+                        <td class="d-none d-md-table-cell">{{ profissional.email || 'N/A' }}</td>
+                        <td class="d-none d-md-table-cell">{{ getAreaNames(profissional.areas) }}</td>
+                        <td>
+                            <span *ngIf="profissional.ativo" class="badge bg-success">Sim</span>
+                            <span *ngIf="!profissional.ativo" class="badge bg-danger">Não</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-info me-2 d-md-none" type="button"
+                                (click)="toggleDetails(profissional.id)">
+                                <i class="bi bi-three-dots"></i>
+                            </button>
+                            <button class="btn btn-sm btn-primary me-2"
+                                (click)="openModalForEdit(profissional)">Editar</button>
+                            <button class="btn btn-sm btn-danger"
+                                (click)="openDeleteConfirmation(profissional)">Excluir</button>
+                        </td>
+                    </tr>
+                    <!-- EXPANDABLE DETAILS ROW -->
+                    <tr class="d-md-none"> 
+                        <td colspan="4" class="p-0">
+                            <div [class.show]="expandedProfissionalId === profissional.id"
+                                class="collapse p-3 bg-light">
+                                <strong>Email:</strong> {{ profissional.email || 'N/A' }} <br>
+                                <strong>Áreas:</strong> {{ getAreaNames(profissional.areas) }}
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
             </tbody>
         </table>
     </div>

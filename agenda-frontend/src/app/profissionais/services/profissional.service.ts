@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Profissional } from '../models/profissional.model';
@@ -28,7 +28,20 @@ export class ProfissionalService {
   constructor(private http: HttpClient) { }
 
   // get a page of professionals
-  getProfissionais(): Observable<Page<Profissional>> {
-    return this.http.get<Page<Profissional>>(this.API_URL);
+  getProfissionais(
+    page: number,
+    size: number,
+    nome: string
+  ): Observable<Page<Profissional>> {
+
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (nome) {
+      params = params.set('nome', nome);
+    }
+
+    return this.http.get<Page<Profissional>>(this.API_URL, { params });
   }
 }

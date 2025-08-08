@@ -6,13 +6,17 @@ import { Area } from '../../models/area.model';
 
 @Component({
   selector: 'app-profissional-list',
-  imports: [CommonModule],
+  standalone: false,
   templateUrl: './profissional-list.component.html',
   styleUrls: ['./profissional-list.component.css']
 })
 export class ProfissionalListComponent implements OnInit {
 
   page: Page<Profissional> | undefined;
+  currentPage = 0;
+  pageSize = 10;
+  filterName = '';
+
   isLoading = true;
 
   constructor(private profissionalService: ProfissionalService) { }
@@ -24,23 +28,44 @@ export class ProfissionalListComponent implements OnInit {
 
   loadProfissionais(): void {
     this.isLoading = true;
-    this.profissionalService.getProfissionais().subscribe({
-      next: (data) => {
-        this.page = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error("Error fetching professionals:", err);
-        this.isLoading = false;
-      }
-    });
+    this.profissionalService.getProfissionais(this.currentPage, this.pageSize, this.filterName)
+      .subscribe({
+        next: (data) => {
+          this.page = data;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error("Error fetching professionals:", err);
+          this.isLoading = false;
+        }
+      });
+  }
+
+  // Handlers
+  onFilter(): void {
+    this.currentPage = 0;
+    this.loadProfissionais();
+  }
+
+
+  onPageChange(pageNumber: number): void {
+    this.currentPage = pageNumber;
+    this.loadProfissionais();
   }
 
   // Helpers
+  getPageNumbers(): number[] {
+    if (!this.page) {
+      return [];
+    }
+    return Array.from({ length: this.page.totalPages }, (_, i) => i);
+  }
+
   getAreaNames(areas: Area[]): string {
     if (!areas || areas.length === 0) {
       return 'N/A';
     }
     return areas.map(area => area.nome).join(', ');
   }
+
 }

@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Profissional } from '../../models/profissional.model';
 import { Page, ProfissionalService } from '../../services/profissional.service';
-import { CommonModule } from '@angular/common';
 import { Area } from '../../models/area.model';
 import { ModalComponent } from '../../../layout/modal/modal.component';
 
@@ -13,9 +12,11 @@ import { ModalComponent } from '../../../layout/modal/modal.component';
 })
 export class ProfissionalListComponent implements OnInit {
 
-  @ViewChild(ModalComponent) modalComponent!: ModalComponent;
+  @ViewChild('formModal') formModal!: ModalComponent;
+  @ViewChild('deleteConfirmationModal') deleteConfirmationModal!: ModalComponent;
 
   profissionalToEdit?: Profissional;
+  profissionalToDelete?: Profissional;
   modalTitle = '';
 
   page: Page<Profissional> | undefined;
@@ -50,26 +51,45 @@ export class ProfissionalListComponent implements OnInit {
   openModalForNew(): void {
     this.modalTitle = 'Novo Profissional';
     this.profissionalToEdit = undefined;
-    this.modalComponent.open();
+    this.formModal.open();
   }
 
   openModalForEdit(profissional: Profissional): void {
     this.modalTitle = 'Editar Profissional';
     this.profissionalToEdit = profissional;
-    this.modalComponent.open();
+    this.formModal.open();
+  }
+
+  openDeleteConfirmation(profissional: Profissional): void {
+    this.profissionalToDelete = profissional; 
+    this.deleteConfirmationModal.open();    
   }
 
   // Handlers
   handleSave(): void {
-    this.modalComponent.close();
+    this.formModal.close();
     this.loadProfissionais();
+  }
+
+  confirmDelete(): void {
+    if (this.profissionalToDelete) {
+      this.profissionalService.delete(this.profissionalToDelete.id).subscribe({
+        next: () => {
+          this.loadProfissionais(); 
+          this.deleteConfirmationModal.close(); 
+        },
+        error: (err) => {
+          console.error("Error deleting professional:", err);
+          this.deleteConfirmationModal.close();
+        }
+      });
+    }
   }
 
   onFilter(): void {
     this.currentPage = 0;
     this.loadProfissionais();
   }
-
 
   onPageChange(pageNumber: number): void {
     this.currentPage = pageNumber;

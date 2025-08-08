@@ -63,4 +63,9 @@ export class ProfissionalService {
   update(id: number, data: ProfissionalRequest): Observable<Profissional> {
     return this.http.put<Profissional>(`${this.API_URL}/${id}`, data);
   }
+
+  // Delete
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/${id}`);
+  }
 }

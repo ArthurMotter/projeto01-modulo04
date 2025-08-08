@@ -51,7 +51,8 @@
                     <td>
                         <button class="btn btn-sm btn-primary me-2"
                             (click)="openModalForEdit(profissional)">Editar</button>
-                        <button class="btn btn-sm btn-danger">Excluir</button>
+                        <button class="btn btn-sm btn-danger"
+                            (click)="openDeleteConfirmation(profissional)">Excluir</button>
                     </td>
                 </tr>
             </tbody>
@@ -81,6 +82,19 @@
     </nav>
 </div>
 
-<app-modal [id]="'modalProfissional'" [title]="modalTitle">
+<!-- CREATE/EDIT Modal -->
+<app-modal #formModal [id]="'modalProfissional'" [title]="modalTitle">
     <app-profissional-form [profissional]="profissionalToEdit" (onSave)="handleSave()"></app-profissional-form>
+</app-modal>
+
+<!-- DELETE CONFIRMATION Modal -->
+<app-modal #deleteConfirmationModal [id]="'modalDeleteConfirmation'" [title]="'Confirmar Exclusão'">
+    <div *ngIf="profissionalToDelete">
+        <p>Você tem certeza que deseja excluir o profissional <strong>{{ profissionalToDelete.nome }}</strong>?</p>
+        <p>Esta ação não pode ser desfeita.</p>
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-secondary me-2" (click)="deleteConfirmationModal.close()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="confirmDelete()">Excluir</button>
+    </div>
 </app-modal>

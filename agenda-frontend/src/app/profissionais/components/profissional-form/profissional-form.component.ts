@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Area } from '../../models/area.model';
 import { Profissional } from '../../models/profissional.model';
@@ -25,11 +25,11 @@ export class ProfissionalFormComponent implements OnInit, OnChanges {
     private areaService: AreaService
   ) {
     this.form = this.fb.group({
-      nome: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.email]],
+      nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
+      email: ['', [Validators.email]], 
       telefone: [''],
       ativo: [true, Validators.required],
-      areaIds: [[]]
+      areaIds: [[], [Validators.required]] 
     });
     this.areas$ = this.areaService.getAreas();
   }
@@ -48,6 +48,7 @@ export class ProfissionalFormComponent implements OnInit, OnChanges {
     }
   }
 
+  // Handlers
   save(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -64,4 +65,9 @@ export class ProfissionalFormComponent implements OnInit, OnChanges {
       error: (err) => console.error("Error saving professional", err)
     });
   }
+
+  // Helpers
+  get nome(): AbstractControl | null { return this.form.get('nome'); }
+  get email(): AbstractControl | null { return this.form.get('email'); }
+  get areaIds(): AbstractControl | null { return this.form.get('areaIds'); }
 }

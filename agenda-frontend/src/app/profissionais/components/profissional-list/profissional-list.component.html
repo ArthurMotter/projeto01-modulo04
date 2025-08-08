@@ -1,1 +1,48 @@
-<p>profissional-list works!</p>
+<div class="container mt-4">
+    <h2 class="mb-4">Cadastro de Profissionais</h2>
+
+    <div *ngIf="isLoading" class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+
+    <!-- Professionals Table -->
+    <div *ngIf="!isLoading && page && page.content.length > 0" class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Áreas</th>
+                    <th scope="col">Ativo</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let profissional of page.content">
+                    <th scope="row">{{ profissional.id }}</th>
+                    <td>{{ profissional.nome }}</td>
+                    <td>{{ profissional.email }}</td>
+                    <td>
+                        {{ getAreaNames(profissional.areas) }}
+                    </td>
+                    <td>
+                        <span *ngIf="profissional.ativo" class="badge bg-success">Sim</span>
+                        <span *ngIf="!profissional.ativo" class="badge bg-danger">Não</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-2">Editar</button>
+                        <button class="btn btn-sm btn-danger">Excluir</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Message for when there is no data -->
+    <div *ngIf="!isLoading && (!page || page.content.length === 0)" class="alert alert-info">
+        Nenhum profissional encontrado.
+    </div>
+</div>

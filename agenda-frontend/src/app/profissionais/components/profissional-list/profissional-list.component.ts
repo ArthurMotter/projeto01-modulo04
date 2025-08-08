@@ -3,6 +3,7 @@ import { Profissional } from '../../models/profissional.model';
 import { Page, ProfissionalService } from '../../services/profissional.service';
 import { Area } from '../../models/area.model';
 import { ModalComponent } from '../../../layout/modal/modal.component';
+import { ToastService } from '../../../shared/toast.service';
 
 @Component({
   selector: 'app-profissional-list',
@@ -26,7 +27,10 @@ export class ProfissionalListComponent implements OnInit {
 
   isLoading = true;
 
-  constructor(private profissionalService: ProfissionalService) { }
+  constructor(
+    private profissionalService: ProfissionalService,
+    private toastService: ToastService
+  ) { }
 
   // Methods
   ngOnInit(): void {
@@ -61,8 +65,8 @@ export class ProfissionalListComponent implements OnInit {
   }
 
   openDeleteConfirmation(profissional: Profissional): void {
-    this.profissionalToDelete = profissional; 
-    this.deleteConfirmationModal.open();    
+    this.profissionalToDelete = profissional;
+    this.deleteConfirmationModal.open();
   }
 
   // Handlers
@@ -75,10 +79,12 @@ export class ProfissionalListComponent implements OnInit {
     if (this.profissionalToDelete) {
       this.profissionalService.delete(this.profissionalToDelete.id).subscribe({
         next: () => {
-          this.loadProfissionais(); 
-          this.deleteConfirmationModal.close(); 
+          this.toastService.showSuccess('Profissional excluído com sucesso!');
+          this.loadProfissionais();
+          this.deleteConfirmationModal.close();
         },
         error: (err) => {
+          this.toastService.showError('Erro ao excluir profissional.');
           console.error("Error deleting professional:", err);
           this.deleteConfirmationModal.close();
         }

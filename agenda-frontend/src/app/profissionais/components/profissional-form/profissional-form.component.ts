@@ -5,6 +5,7 @@ import { Area } from '../../models/area.model';
 import { Profissional } from '../../models/profissional.model';
 import { AreaService } from '../../services/area.service';
 import { ProfissionalService } from '../../services/profissional.service';
+import { ToastService } from '../../../shared/toast.service';
 
 @Component({
   selector: 'app-profissional-form',
@@ -22,14 +23,15 @@ export class ProfissionalFormComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder,
     private profissionalService: ProfissionalService,
-    private areaService: AreaService
+    private areaService: AreaService,
+    private toastService: ToastService
   ) {
     this.form = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
-      email: ['', [Validators.email]], 
+      email: ['', [Validators.email]],
       telefone: [''],
       ativo: [true, Validators.required],
-      areaIds: [[], [Validators.required]] 
+      areaIds: [[], [Validators.required]]
     });
     this.areas$ = this.areaService.getAreas();
   }
@@ -54,15 +56,21 @@ export class ProfissionalFormComponent implements OnInit, OnChanges {
       this.form.markAllAsTouched();
       return;
     }
-
     const formData = this.form.value;
     const request = this.profissional ?
       this.profissionalService.update(this.profissional.id, formData) :
       this.profissionalService.create(formData);
 
     request.subscribe({
-      next: () => this.onSave.emit(),
-      error: (err) => console.error("Error saving professional", err)
+      next: () => {
+        const message = this.profissional ? 'Profissional atualizado com sucesso!' : 'Profissional criado com sucesso!';
+        this.toastService.showSuccess(message);
+        this.onSave.emit();
+      },
+      error: (err) => {
+        this.toastService.showError('Erro ao salvar profissional.');
+        console.error("Error saving professional", err);
+      }
     });
   }
 

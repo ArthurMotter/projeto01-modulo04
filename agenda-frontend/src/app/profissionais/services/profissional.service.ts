@@ -18,6 +18,15 @@ export interface Page<T> {
   empty: boolean;
 }
 
+// Request DTO interface
+export interface ProfissionalRequest {
+  nome: string;
+  telefone: string;
+  email: string;
+  ativo: boolean;
+  areaIds: number[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -43,5 +52,15 @@ export class ProfissionalService {
     }
 
     return this.http.get<Page<Profissional>>(this.API_URL, { params });
+  }
+
+  // Post
+  create(data: ProfissionalRequest): Observable<Profissional> {
+    return this.http.post<Profissional>(this.API_URL, data);
+  }
+
+  // Put
+  update(id: number, data: ProfissionalRequest): Observable<Profissional> {
+    return this.http.put<Profissional>(`${this.API_URL}/${id}`, data);
   }
 }

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Profissional } from '../../models/profissional.model';
 import { Page, ProfissionalService } from '../../services/profissional.service';
 import { CommonModule } from '@angular/common';
 import { Area } from '../../models/area.model';
+import { ModalComponent } from '../../../layout/modal/modal.component';
 
 @Component({
   selector: 'app-profissional-list',
@@ -11,6 +12,11 @@ import { Area } from '../../models/area.model';
   styleUrls: ['./profissional-list.component.css']
 })
 export class ProfissionalListComponent implements OnInit {
+
+  @ViewChild(ModalComponent) modalComponent!: ModalComponent;
+
+  profissionalToEdit?: Profissional;
+  modalTitle = '';
 
   page: Page<Profissional> | undefined;
   currentPage = 0;
@@ -41,7 +47,24 @@ export class ProfissionalListComponent implements OnInit {
       });
   }
 
+  openModalForNew(): void {
+    this.modalTitle = 'Novo Profissional';
+    this.profissionalToEdit = undefined;
+    this.modalComponent.open();
+  }
+
+  openModalForEdit(profissional: Profissional): void {
+    this.modalTitle = 'Editar Profissional';
+    this.profissionalToEdit = profissional;
+    this.modalComponent.open();
+  }
+
   // Handlers
+  handleSave(): void {
+    this.modalComponent.close();
+    this.loadProfissionais();
+  }
+
   onFilter(): void {
     this.currentPage = 0;
     this.loadProfissionais();

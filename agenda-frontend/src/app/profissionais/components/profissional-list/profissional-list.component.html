@@ -1,6 +1,10 @@
 <div class="container mt-4">
     <h2 class="mb-4">Cadastro de Profissionais</h2>
 
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-success" (click)="openModalForNew()">Novo Profissional</button>
+    </div>
+
     <!-- Filter -->
     <div class="row mb-3">
         <div class="col-md-6">
@@ -45,7 +49,8 @@
                         <span *ngIf="!profissional.ativo" class="badge bg-danger">Não</span>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-primary me-2">Editar</button>
+                        <button class="btn btn-sm btn-primary me-2"
+                            (click)="openModalForEdit(profissional)">Editar</button>
                         <button class="btn btn-sm btn-danger">Excluir</button>
                     </td>
                 </tr>
@@ -75,3 +80,7 @@
         </ul>
     </nav>
 </div>
+
+<app-modal [id]="'modalProfissional'" [title]="modalTitle">
+    <app-profissional-form [profissional]="profissionalToEdit" (onSave)="handleSave()"></app-profissional-form>
+</app-modal>

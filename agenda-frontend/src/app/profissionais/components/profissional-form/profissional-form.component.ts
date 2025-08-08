@@ -45,9 +45,17 @@ export class ProfissionalFormComponent implements OnInit, OnChanges {
         ...this.profissional,
         areaIds: this.profissional.areas.map(a => a.id)
       });
-    } else if (!this.profissional) {
-      this.form.reset({ ativo: true, areaIds: [] });
     }
+  }
+
+  public resetForm(): void {
+    this.form.reset({
+      nome: '',
+      email: '',
+      telefone: '',
+      ativo: true,
+      areaIds: []
+    });
   }
 
   // Handlers

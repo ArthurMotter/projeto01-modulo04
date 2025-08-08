@@ -4,6 +4,7 @@ import { Page, ProfissionalService } from '../../services/profissional.service';
 import { Area } from '../../models/area.model';
 import { ModalComponent } from '../../../layout/modal/modal.component';
 import { ToastService } from '../../../shared/toast.service';
+import { ProfissionalFormComponent } from '../profissional-form/profissional-form.component';
 
 @Component({
   selector: 'app-profissional-list',
@@ -15,6 +16,7 @@ export class ProfissionalListComponent implements OnInit {
 
   @ViewChild('formModal') formModal!: ModalComponent;
   @ViewChild('deleteConfirmationModal') deleteConfirmationModal!: ModalComponent;
+  @ViewChild(ProfissionalFormComponent) formComponent!: ProfissionalFormComponent;
 
   expandedProfissionalId: number | null = null;
   profissionalToEdit?: Profissional;
@@ -56,6 +58,9 @@ export class ProfissionalListComponent implements OnInit {
   openModalForNew(): void {
     this.modalTitle = 'Novo Profissional';
     this.profissionalToEdit = undefined;
+
+    this.formComponent.resetForm();
+
     this.formModal.open();
   }
 
